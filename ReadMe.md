@@ -1,7 +1,7 @@
 Code that creates folders named after addresses of abandoned houses on your Google Drive according to needed folder tree. Also it adds unique id to main folder of each house and create there spreadsheet named the same as folder according to template spreadsheet.
 
 1. Insert your personal data into personal_data.py
-2. Prepare *.txt file with adresses of houses
+2. Prepare *.txt file with adresses of houses and move it to /cities
 3. Launch code by running "python main.py *.txt"
 
 
