@@ -2,19 +2,10 @@ import requests
 import json
 import sys
 import random
-from Google import Create_Service
 
-CLIENT_SECRET_FILE = "client_secret.json"
-API_NAME = "drive"
-API_VERSION = "v3"
-SCOPES = ["https://www.googleapis.com/auth/drive"]
-
-service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
-
-# id of folder where you want to create other folders
-root_folder_id = '1kg2bc_DNPVwu8sbHp9AC3hHjuJh4OCse'
-# id of template spreadsheet that you need to copy
-template_spreadsheet_id = '1Y6Rp4_kDz02wnqbkNq3ZwS5j88HQeFu26l0wNB5wtcY'
+from personal_data import template_spreadsheet_id
+from folder_tree import create_folder_tree
+from google_service import service
 
 
 def generate_id():
@@ -115,75 +106,24 @@ def creating_foldername():
     return final_name
 
 
-# creating folders due to our folder tree
-rootfolders = creating_foldername()
-
-for folder in rootfolders:
-    # pylint: disable=maybe-no-member
-    file_metadate = {
-        'name': folder,
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [root_folder_id]
-    }
-    main_folder = service.files().create(
-        body=file_metadate).execute()
-    main_id = main_folder.get('id')
-
-    file_metadate_doc = {
-        'name': 'documents',
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [main_id]
-    }
-    doc_folder = service.files().create(
-        body=file_metadate_doc).execute()
-    doc_id = doc_folder.get('id')
-
-    file_metadate_image = {
-        'name': 'images',
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [main_id]
-    }
-    image_folder = service.files().create(
-        body=file_metadate_image).execute()
-    image_id = image_folder.get('id')
-
-    file_metadate_site = {
-        'name': 'site',
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [doc_id]
-    }
-    service.files().create(body=file_metadate_site).execute(
-    )
-
-    file_metadate_prochee = {
-        'name': 'prochee',
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [doc_id]
-    }
-    service.files().create(body=file_metadate_prochee).execute(
-    )
-
-    file_metadate_site = {
-        'name': 'site',
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [image_id]
-    }
-    service.files().create(body=file_metadate_site).execute(
-    )
-
-    file_metadate_prochee = {
-        'name': 'prochee',
-        'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [image_id]
-    }
-    service.files().create(body=file_metadate_prochee).execute(
-    )
-
+def create_spreadsheet_name(folder, service, main_id):
     a, b = folder.split('_', 1)
     spreadsheet_name = b+'_'+a+'_дослідження'
-    file_metadate_spreadsheet = {
+    file_metadata_spreadsheet = {
         'name': spreadsheet_name,
         'parents': [main_id]
     }
     service.files().copy(fileId=template_spreadsheet_id,
-                         body=file_metadate_spreadsheet).execute()
+                         body=file_metadata_spreadsheet).execute()
+
+
+def create_folders():
+    """ Func create folders due to needed folder tree"""
+    rootfolders = creating_foldername()
+    for folder in rootfolders:
+        # pylint: disable=maybe-no-member
+        main_id = create_folder_tree(folder)
+        create_spreadsheet_name(folder, service, main_id)
+
+
+create_folders()
