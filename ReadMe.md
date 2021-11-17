@@ -8,10 +8,12 @@ Code that creates folders named after addresses of abandoned houses on your Goog
 Frequent troubles:
 If your access token "*.pickle" is outdated just delete it and launch code again. You will need to authorise your web-application one more time.
 
-Important: 
+IMPORTANT: 
 
 Before launching code prepare your web-applications to work with Google Drive API
 
 Official instruction from Google of how to do it: https://developers.google.com/drive/api/v3/about-sdk
 
 If you want to change folder tree go to folder_tree.py and add/remove folders metadate here
+
+You need to have access to template spreadsheet as editor to have right of copying it to folder 

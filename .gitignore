@@ -2,9 +2,9 @@
 /__pycache__
 /cities/*.txt
 /output/*.json
-/meta1.json
+/meta.json
 /*.pickle
-/person.py
+/personal_data.py
 
 
 

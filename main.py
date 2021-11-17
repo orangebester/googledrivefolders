@@ -1,7 +1,9 @@
 import requests
+import time
 import json
 import sys
 import random
+import string
 
 from personal_data import template_spreadsheet_id
 from folder_tree import create_folder_tree
@@ -10,7 +12,7 @@ from google_service import service
 
 def generate_id():
     """ Generates id each elements of which consist of random values """
-    alphabet = list('abcdefghijklmnopqrstuvwxyz')
+    alphabet = list(string.ascii_lowercase)
     first = random.randint(0, 9)
     second = random.choice(alphabet)
     third = random.choice(alphabet)
@@ -117,6 +119,16 @@ def create_spreadsheet_name(folder, service, main_id):
                          body=file_metadata_spreadsheet).execute()
 
 
+def create_document_for_notes(service, main_id):
+    document_name = 'Для нотування корисної інформації'
+    body = {
+        'name': document_name,
+        'mimeType': 'application/vnd.google-apps.document',
+        'parents': [main_id]
+    }
+    service.files().create(body=body).execute()
+
+
 def create_folders():
     """ Func create folders due to needed folder tree"""
     rootfolders = creating_foldername()
@@ -124,6 +136,8 @@ def create_folders():
         # pylint: disable=maybe-no-member
         main_id = create_folder_tree(folder)
         create_spreadsheet_name(folder, service, main_id)
+        create_document_for_notes(service, main_id)
+        time.sleep(1.0)
 
 
 create_folders()
